@@ -6,14 +6,22 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
-  h2 { text-align:center; margin:20px 0; position: relative; z-index:1; }
-  .controls { margin-bottom:15px; text-align:center; background-color: rgba(255,255,255,0.9); padding:10px; z-index:1; position: relative; }
-  .canales-container { display: flex; flex-wrap: wrap; justify-content: space-between; background-color: rgba(255,255,255,0.95); padding:10px; }
+  h2 { text-align:center; margin:20px 0; }
+  .controls { margin-bottom:15px; text-align:center; background:#fff; padding:10px; }
+  .canales-container { display: flex; flex-wrap: wrap; justify-content: space-between; padding:10px; }
   .canal-item { width: 48%; margin-bottom: 5px; display: flex; align-items: center; border:1px solid #ccc; padding:5px; border-radius:5px; background: #fff; }
   .canal-item span { flex:1; font-weight:bold; }
-  .canal-item input[type="text"] { flex:1; margin-left:5px; text-align:center; }
   .checkbox { margin-left:10px; transform: scale(1.2); cursor:pointer; }
-  button { margin:5px; padding:8px 12px; background:#2196F3; color:white; border:none; border-radius:5px; cursor:pointer; }
+  select, input[type="text"] {
+    margin-left:5px;
+    flex:1;
+    text-align:center;
+    padding:3px;
+  }
+  button {
+    margin:5px; padding:8px 12px; background:#2196F3; color:white;
+    border:none; border-radius:5px; cursor:pointer;
+  }
   button:hover { background:#1976D2; }
 </style>
 </head>
@@ -23,18 +31,21 @@
 <h2>Revisión de Canales Operativos</h2>
 
 <div class="controls">
-  <label for="tecnico">Técnico Responsable:</label>
+  <label for="tecnico">Persona Responsable:</label>
   <select id="tecnico">
     <option value="">Seleccione</option>
     <option>FRANCISCO C</option>
     <option>RONALD G</option>
     <option>WILTON M</option>
     <option>ANDY O</option>
-  </select>
+    <option>GENESIS G</option>
+    <option>FABIAN T</option>
+    <option>RAFAEL G</option>
+  </select> 
   
   <label for="fecha">Fecha:</label>
   <input type="date" id="fecha">
-  
+
   <button onclick="marcarTodos()">Marcar Todos Activos</button>
   <button onclick="guardarObservaciones()">Guardar Observaciones</button>
   <button onclick="descargarReporte()">Descargar Imagen</button>
@@ -43,6 +54,7 @@
 <div class="canales-container" id="canalesContainer"></div>
 
 <script>
+// Lista de canales
 const canales = [
   "ECUAVISA","EL TRECE","RTS","TELEAMAZONAS","COSTATV","ECUADORTV","GAMA TV",
   "ANTENA 3 SERIES","TCTELEVISION","TVC","AZTECA UNO","OROMAR","RTU","TELESUR",
@@ -54,24 +66,37 @@ const canales = [
   "VENEVISION","AXN","CINECANAL","AMC","HOLATV","TNT","CINEMA PLATINO",
   "PANICO TV","CINEMEXICANO","TRAVELXP","MTV 80 S","MTV","MTV HITS","CARACOL",
   "Q MUSICA","VIDEOROLA","GOURMET","LIFETIME","DISCOVERY CHANNEL","E!","RCN",
-  "CANAL DE LAS ESTRELLAS - Problemas sintonización","TELEMUNDO","PASIONES",
-  "TELENOVELAS","VENE PLUS","CITY TV","TELEFE","SEÑAL COLOMBIA","NUESTRO TIEMPO",
-  "ENLACE","EWTN","TELEVEN"
+  "CANAL DE LAS ESTRELLAS","TELEMUNDO","PASIONES","TELENOVELAS","VENE PLUS",
+  "CITY TV","TELEFE","SEÑAL COLOMBIA","NUESTRO TIEMPO","ENLACE","EWTN","TELEVEN"
 ];
 
+// Fecha de hoy
 document.getElementById('fecha').valueAsDate = new Date();
 
-// Crear los canales (empieza en número 2)
+// Crear los canales (desde número 2)
 const container = document.getElementById('canalesContainer');
 canales.forEach((nombre, index) => {
   const numero = index + 2;
   const div = document.createElement('div');
   div.className = 'canal-item';
+
   div.innerHTML = `
     <span>${numero.toString().padStart(2,'0')} - ${nombre}</span>
-    <input type="checkbox" class="checkbox" data-numero="${numero}" data-canal="${nombre}">
-    <input type="text" class="observacion" placeholder="" data-numero="${numero}" data-canal="${nombre}" oninput="soloTexto(this)">
+
+    <input type="checkbox" class="checkbox">
+
+    <select class="observacion-opcion" data-numero="${numero}">
+      <option value="">-- Seleccione --</option>
+      <option value="SIN SEÑAL">SIN SEÑAL</option>
+      <option value="SE REINICIÓ">SE REINICIÓ</option>
+      <option value="SE CAMBIÓ DE CANAL">SE CAMBIÓ DE CANAL</option>
+      <option value="SEÑAL BAJA">SEÑAL BAJA</option>
+    </select>
+
+    <input type="text" class="observacion" placeholder=""
+      data-numero="${numero}" data-canal="${nombre}" oninput="soloTexto(this)">
   `;
+
   container.appendChild(div);
 });
 
@@ -80,53 +105,67 @@ function marcarTodos(){
 }
 
 function soloTexto(input){
-  input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'') .toUpperCase();
+  input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'').toUpperCase();
 }
 
-// Enviar canal + número + observación
+// Copiar selección al campo de texto
+document.addEventListener("change", function(e){
+  if (e.target.classList.contains("observacion-opcion")) {
+    const numero = e.target.dataset.numero;
+    const input = document.querySelector(`input.observacion[data-numero="${numero}"]`);
+    input.value = e.target.value;
+  }
+});
+
+// Guardar datos en Google Sheets
 async function guardarObservaciones(){
+  const responsable = document.getElementById('tecnico').value;
+
+  if (!responsable){
+    alert("⚠️ Seleccione la persona responsable.");
+    return;
+  }
+
   const observaciones = [];
 
   document.querySelectorAll('.observacion').forEach(input => {
-    const numero = input.dataset.numero;
-    const canal = input.dataset.canal;
     const texto = input.value.trim();
-
-    if (texto !== "") {
+    if (texto !== ""){
       observaciones.push({
-        numero: numero,
-        canal: canal,
+        responsable: responsable,
+        numero: input.dataset.numero,
+        canal: input.dataset.canal,
         observacion: texto
       });
     }
   });
 
-  if (observaciones.length === 0) {
+  if (observaciones.length === 0){
     alert("⚠️ No hay observaciones para guardar.");
     return;
   }
 
-  const scriptURL = "https://script.google.com/macros/s/AKfycbwkBCjhdaWuOlUndsNR16Q8DBF-67ZO-BozekRGKWIWiXZjotcloXpcQ4qYSWGF2QAksA/exec";
-
   try {
-    await fetch(scriptURL, {
+    await fetch("https://script.google.com/macros/s/AKfycbzyOB9mnlBVjGJRqJ29e2WkPIlMN6BIDLtAD5I7jNXClpzEquBk7a2g-kEZRBqo17dtkA/exec", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(observaciones),
       mode: "no-cors"
     });
-    alert("✅ Observaciones guardadas correctamente en Google Sheets.");
-  } catch (error) {
-    alert("❌ Error al guardar: " + error.message);
+
+    alert("✅ Guardado correctamente en Google Sheets.");
+
+  } catch (error){
+    alert("❌ Error: " + error.message);
   }
 }
 
 function descargarReporte(){
   html2canvas(document.body).then(canvas => {
     const link = document.createElement('a');
-    const tecnico = document.getElementById('tecnico').value || 'sin_tecnico';
+    const resp = document.getElementById('tecnico').value || 'sin_responsable';
     const fecha = document.getElementById('fecha').value || 'sin_fecha';
-    link.download = `reporte_${tecnico}_${fecha}.png`;
+    link.download = `reporte_${resp}_${fecha}.png`;
     link.href = canvas.toDataURL();
     link.click();
   });
