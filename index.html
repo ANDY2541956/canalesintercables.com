@@ -65,15 +65,15 @@ const canales = [
   "UNIVERSAL","FILM &ARTS","COMEDY CENTRAL","USA","TNT SERIES","PARAMOUNT",
   "VENEVISION","AXN","CINECANAL","AMC","HOLATV","TNT","CINEMA PLATINO",
   "PANICO TV","CINEMEXICANO","TRAVELXP","MTV 80 S","MTV","MTV HITS","CARACOL",
-  "Q MUSICA","VIDEOROLA","GOURMET","LIFETIME","DISCOVERY CHANNEL","ENTERTAIMENT","RCN",
+  "Q MUSICA","VIDEOROLA","GOURMET","LIFETIME","DISCOVERY CHANNEL","E!","RCN",
   "CANAL DE LAS ESTRELLAS","TELEMUNDO","PASIONES","TELENOVELAS","VENE PLUS",
   "CITY TV","TELEFE","SEÑAL COLOMBIA","NUESTRO TIEMPO","ENLACE","EWTN","TELEVEN"
 ];
 
-// Fecha de hoy
+// Fecha automática
 document.getElementById('fecha').valueAsDate = new Date();
 
-// Crear los canales (desde número 2)
+// Crear canales desde el número 2
 const container = document.getElementById('canalesContainer');
 canales.forEach((nombre, index) => {
   const numero = index + 2;
@@ -87,11 +87,17 @@ canales.forEach((nombre, index) => {
 
     <select class="observacion-opcion" data-numero="${numero}">
       <option value="">-- Seleccione --</option>
+      <option value="SIN VIDEO">SIN VIDEO</option>
+      <option value="SIN AUDIO">SIN AUDIO</option>
+      <option value="SIN AUDIO Y VIDEO">SIN AUDIO Y VIDEO</option>
       <option value="SIN SEÑAL">SIN SEÑAL</option>
+      <option value="IMAGEN COLGADA">IMAGEN COLGADA</option>
+      <option value="CANAL BORROSO">CANAL BORROSO</option>
+      <option value="CANAL REVUELTO ">CANAL REVUELTO</option>
+      <option value="PROGRAMA ENCRIPTADO">PROGRAMA ENCRIPTADO</option>
+      <option value="SE CAMBIO DE CANAL">SE CAMBIO DE CANAL</option>
+      <option value="SE REALIZO BUSQUEDA CIEGA">SE REALIZO BUSQUEDA CIEGA</option>
       <option value="SE REINICIÓ">SE REINICIÓ</option>
-      <option value="SE CAMBIÓ DE CANAL">SE CAMBIÓ DE CANAL</option>
-      <option value="SEÑAL BAJA">SEÑAL BAJA</option>
-       <option value="SE REALIZO BUSQUEDA CIEGA">SE REALIZO BUSQUEDA CIEGA</option>
     </select>
 
     <input type="text" class="observacion" placeholder=""
@@ -109,7 +115,7 @@ function soloTexto(input){
   input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'').toUpperCase();
 }
 
-// Copiar selección al campo de texto
+// Copiar selección al text input
 document.addEventListener("change", function(e){
   if (e.target.classList.contains("observacion-opcion")) {
     const numero = e.target.dataset.numero;
@@ -118,7 +124,7 @@ document.addEventListener("change", function(e){
   }
 });
 
-// Guardar datos en Google Sheets
+// Guardar Observaciones
 async function guardarObservaciones(){
   const responsable = document.getElementById('tecnico').value;
 
@@ -141,11 +147,36 @@ async function guardarObservaciones(){
     }
   });
 
+  // 🔵 SI NO HAY OBSERVACIONES → ENVIAR "TODO OPERATIVO"
   if (observaciones.length === 0){
-    alert("⚠️ No hay observaciones para guardar.");
+
+    alert("⚠️ CANALES OPERATIVOS — No se registraron observaciones");
+
+    const dataTodoActivo = [{
+      responsable: responsable,
+      numero: "00",
+      canal: "TODOS",
+      observacion: "TODOS LOS CANALES OPERATIVOS"
+    }];
+
+    try {
+      await fetch("https://script.google.com/macros/s/AKfycbzyOB9mnlBVjGJRqJ29e2WkPIlMN6BIDLtAD5I7jNXClpzEquBk7a2g-kEZRBqo17dtkA/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataTodoActivo),
+        mode: "no-cors"
+      });
+
+      alert("✅ Reporte enviado: TODOS LOS CANALES ACTIVOS");
+
+    } catch (error){
+      alert("❌ Error: " + error.message);
+    }
+
     return;
   }
 
+  // SI HAY OBSERVACIONES → ENVIAR NORMAL
   try {
     await fetch("https://script.google.com/macros/s/AKfycbzyOB9mnlBVjGJRqJ29e2WkPIlMN6BIDLtAD5I7jNXClpzEquBk7a2g-kEZRBqo17dtkA/exec", {
       method: "POST",
@@ -175,6 +206,7 @@ function descargarReporte(){
 
 </body>
 </html>
+
 
 
 
