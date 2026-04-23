@@ -7,21 +7,48 @@
 
 <style>
   h2 { text-align:center; margin:20px 0; }
+
   .controls { margin-bottom:15px; text-align:center; background:#fff; padding:10px; }
-  .canales-container { display: flex; flex-wrap: wrap; justify-content: space-between; padding:10px; }
-  .canal-item { width: 48%; margin-bottom: 5px; display: flex; align-items: center; border:1px solid #ccc; padding:5px; border-radius:5px; background: #fff; }
+
+  .contenedor-principal {
+    display: flex;
+    gap: 10px;
+  }
+
+  .columna {
+    width: 50%;
+  }
+
+  .columna h3 {
+    text-align: center;
+  }
+
+  .canal-item {
+    display: flex;
+    align-items: center;
+    border:1px solid #ccc;
+    padding:5px;
+    border-radius:5px;
+    background: #fff;
+    margin-bottom:5px;
+  }
+
   .canal-item span { flex:1; font-weight:bold; }
+
   .checkbox { margin-left:10px; transform: scale(1.2); cursor:pointer; }
+
   select, input[type="text"] {
     margin-left:5px;
     flex:1;
     text-align:center;
     padding:3px;
   }
+
   button {
     margin:5px; padding:8px 12px; background:#2196F3; color:white;
     border:none; border-radius:5px; cursor:pointer;
   }
+
   button:hover { background:#1976D2; }
 </style>
 </head>
@@ -31,7 +58,7 @@
 <h2>Revisión de Canales Operativos</h2>
 
 <div class="controls">
-  <label for="tecnico">Persona Responsable:</label>
+  <label>Persona Responsable:</label>
   <select id="tecnico">
     <option value="">Seleccione</option>
     <option>FRANCISCO C</option>
@@ -44,7 +71,7 @@
     <option>LEONARDO R</option>
   </select> 
   
-  <label for="fecha">Fecha:</label>
+  <label>Fecha:</label>
   <input type="date" id="fecha">
 
   <button onclick="marcarTodos()">Marcar Todos Activos</button>
@@ -52,161 +79,115 @@
   <button onclick="descargarReporte()">Descargar Imagen</button>
 </div>
 
-<div class="canales-container" id="canalesContainer"></div>
+<div class="contenedor-principal">
+  
+  <div class="columna">
+    <h3>CANALES ANALÓGICOS</h3>
+    <div id="analogicos"></div>
+  </div>
+
+  <div class="columna">
+    <h3>CANALES DIGITALES</h3>
+    <div id="digitales"></div>
+  </div>
+
+</div>
 
 <script>
-// Lista de canales
+
+// ANALÓGICOS
 const canales = [
 "ECUAVISA","EL TRECE","RTS","TELEAMAZONAS","COSTA TV","ECUADOR TV","GAMA TV","ANTENA 3 SERIES","TC TELEVISION","TVC","AZTECA UNO","OROMAR","44.2","TELESUR","HISPAN TV","ANTV","A&E","VTV","ESPN HD","ESPN 2","FOX SPORTS 3","ESPN 3","ESPN 4","ESPN 5","HISTORY","HISTORY 2","EUROCHANNEL","HBO FAMILY","ZOOMOO","NICKELODEON","DREAMWORKS","NICK JR","CANAL 9","CARTOONITO","CARTOON NETWORK","TOONCAST","TNT SPORTS","SONY","SONY MOVIES","A3 CINEMA","STUDIO UNIVERSAL","UNIVERSAL","FILM & ARTS","COMEDY CENTRAL","USA","TNT SERIES","EUROPA HD","VENEVISION","AXN","CINECANAL","AMC","HOLA TV","TNT","CINEMA PLATINO","PANICO TV","CINE MEXICANO","TRAVEL XP","AMC SERIES","MTV","TV PUBLICA ARG","CARACOL","Q MUSICA","VIDEO ROLA","GOURMET","LIFETIME","DISCOVERY CHANNEL","E!","RCN SD","CANAL DE LAS ESTRELLAS","TELEMUNDO","PASIONES","TELENOVELAS","VENE PLUS","CITY TV","TELEFE","SENAL COLOMBIA","NUESTRO TIEMPO","ENLACE","EWTN","TELEVEN"
-
 ];
 
-// Fecha automática
+// DIGITALES (57)
+const canalesDigitales = [
+"ECUAVISA","EL TRECE","RTS","TELEAMAZONAS","COSTA TV","ECUADOR TV","GAMA TV",
+"TC TELEVISION","TVC","OROMAR TV","KANAL D DRAMA","TELESUR","HISPAN TV",
+"RT RUSIAN TV","A&E","TyC SPORTS","ECDF","FOX SPORTS 2","FOX SPORTS 3",
+"ESPN","ESPN 2","ESPN 3","HISTORY","HISTORY 2","HBO","NAT GEO","ZOOMOO",
+"NICK","DREAMWORKS","NICK JR","CARTOONITO","CARTOON NETWORK","TOONCAST",
+"SPACE","SONY CHANNEL","SONY MOVIES","STUDIO UNIVERSAL","UNIVERSAL",
+"COMEDY CENTRAL","USA","TNT SERIES","AXN","CINECANAL","AMC","HOLA TV",
+"TNT","CINEMA PLATINO","PANICO HD","CINE MEXICANO","LIFETIME",
+"DISCOVERY CHANNEL","E! ENTERTAIMENT","LAS ESTRELLAS","TELEMUNDO",
+"PASIONES","TELENOVELAS","TELEFE"
+];
+
+const analogicosDiv = document.getElementById('analogicos');
+const digitalesDiv = document.getElementById('digitales');
+
 document.getElementById('fecha').valueAsDate = new Date();
 
-// Crear canales desde el número 2
-const container = document.getElementById('canalesContainer');
-canales.forEach((nombre, index) => {
-  const numero = index + 2;
-  const div = document.createElement('div');
-  div.className = 'canal-item';
+// ANALÓGICOS NORMAL
+function crearCanales(lista, tipo, contenedor, inicio){
+  lista.forEach((nombre, index) => {
+    const numero = inicio + index;
+    const idUnico = `${numero}-${tipo}`;
 
-  div.innerHTML = `
-    <span>${numero.toString().padStart(2,'0')} - ${nombre}</span>
+    const div = document.createElement('div');
+    div.className = 'canal-item';
 
-    <input type="checkbox" class="checkbox">
+    div.innerHTML = `
+      <span>${numero} - ${nombre}</span>
+      <input type="checkbox" class="checkbox">
+      <select class="observacion-opcion" data-id="${idUnico}">
+        <option value="">-- Seleccione --</option>
+        <option value="SIN VIDEO">SIN VIDEO</option>
+        <option value="SIN AUDIO">SIN AUDIO</option>
+        <option value="SIN AUDIO Y VIDEO">SIN AUDIO Y VIDEO</option>
+        <option value="SIN SEÑAL">SIN SEÑAL</option>
+      </select>
+      <input type="text" class="observacion" data-id="${idUnico}" data-numero="${numero}" data-canal="${nombre} (${tipo})">
+    `;
 
-    <select class="observacion-opcion" data-numero="${numero}">
-      <option value="">-- Seleccione --</option>
-      <option value="SIN VIDEO">SIN VIDEO</option>
-      <option value="SIN AUDIO">SIN AUDIO</option>
-      <option value="SIN AUDIO Y VIDEO">SIN AUDIO Y VIDEO</option>
-      <option value="SIN SEÑAL">SIN SEÑAL</option>
-      <option value="IMAGEN COLGADA">IMAGEN COLGADA</option>
-      <option value="CANAL BORROSO">CANAL BORROSO</option>
-      <option value="CANAL REVUELTO ">CANAL REVUELTO</option>
-      <option value="PROGRAMA ENCRIPTADO">PROGRAMA ENCRIPTADO</option>
-      <option value="SE CAMBIO DE CANAL">SE CAMBIO DE CANAL</option>
-      <option value="SE REALIZO BUSQUEDA CIEGA">SE REALIZO BUSQUEDA CIEGA</option>
-      <option value="SE REINICIÓ">SE REINICIÓ</option>
-    </select>
-
-    <input type="text" class="observacion" placeholder=""
-      data-numero="${numero}" data-canal="${nombre}" oninput="soloTexto(this)">
-  `;
-
-  container.appendChild(div);
-});
-
-function marcarTodos(){
-  document.querySelectorAll('.checkbox').forEach(cb => cb.checked = true);
-}
-
-function soloTexto(input){
-  input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'').toUpperCase();
-}
-
-// Copiar selección al text input
-document.addEventListener("change", function(e){
-  if (e.target.classList.contains("observacion-opcion")) {
-    const numero = e.target.dataset.numero;
-    const input = document.querySelector(`input.observacion[data-numero="${numero}"]`);
-    input.value = e.target.value;
-  }
-});
-
-// Guardar Observaciones
-async function guardarObservaciones(){
-  const responsable = document.getElementById('tecnico').value;
-
-  if (!responsable){
-    alert("⚠️ Seleccione la persona responsable.");
-    return;
-  }
-
-  const observaciones = [];
-
-  document.querySelectorAll('.observacion').forEach(input => {
-    const texto = input.value.trim();
-    if (texto !== ""){
-      observaciones.push({
-        responsable: responsable,
-        numero: input.dataset.numero,
-        canal: input.dataset.canal,
-        observacion: texto
-      });
-    }
-  });
-
-  // 🔵 SI NO HAY OBSERVACIONES → ENVIAR "TODO OPERATIVO"
-  if (observaciones.length === 0){
-
-    alert("⚠️ CANALES OPERATIVOS — No se registraron observaciones");
-
-    const dataTodoActivo = [{
-      responsable: responsable,
-      numero: "00",
-      canal: "TODOS",
-      observacion: "TODOS LOS CANALES OPERATIVOS"
-    }];
-
-    try {
-      await fetch("https://script.google.com/macros/s/AKfycbzyOB9mnlBVjGJRqJ29e2WkPIlMN6BIDLtAD5I7jNXClpzEquBk7a2g-kEZRBqo17dtkA/exec", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataTodoActivo),
-        mode: "no-cors"
-      });
-
-      alert("✅ Reporte enviado: TODOS LOS CANALES ACTIVOS");
-
-    } catch (error){
-      alert("❌ Error: " + error.message);
-    }
-
-    return;
-  }
-
-  // SI HAY OBSERVACIONES → ENVIAR NORMAL
-  try {
-    await fetch("https://script.google.com/macros/s/AKfycbzyOB9mnlBVjGJRqJ29e2WkPIlMN6BIDLtAD5I7jNXClpzEquBk7a2g-kEZRBqo17dtkA/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(observaciones),
-      mode: "no-cors"
-    });
-
-    alert("✅ Guardado correctamente en Google Sheets.");
-
-  } catch (error){
-    alert("❌ Error: " + error.message);
-  }
-}
-
-function descargarReporte(){
-  html2canvas(document.body).then(canvas => {
-    const link = document.createElement('a');
-    const resp = document.getElementById('tecnico').value || 'sin_responsable';
-    const fecha = document.getElementById('fecha').value || 'sin_fecha';
-    link.download = `reporte_${resp}_${fecha}.png`;
-    link.href = canvas.toDataURL();
-    link.click();
+    contenedor.appendChild(div);
   });
 }
+
+// 🔥 DIGITALES CON 31.1, 31.2...
+function crearDigitales(lista, contenedor){
+  let canalBase = 31;
+  let sub = 1;
+
+  lista.forEach((nombre) => {
+
+    const numero = `${canalBase}.${sub}`;
+    const idUnico = `${numero}-DIGITAL`;
+
+    const div = document.createElement('div');
+    div.className = 'canal-item';
+
+    div.innerHTML = `
+      <span>${numero} - ${nombre}</span>
+      <input type="checkbox" class="checkbox">
+      <select class="observacion-opcion" data-id="${idUnico}">
+        <option value="">-- Seleccione --</option>
+        <option value="SIN VIDEO">SIN VIDEO</option>
+        <option value="SIN AUDIO">SIN AUDIO</option>
+        <option value="SIN AUDIO Y VIDEO">SIN AUDIO Y VIDEO</option>
+        <option value="SIN SEÑAL">SIN SEÑAL</option>
+      </select>
+      <input type="text" class="observacion" data-id="${idUnico}" data-numero="${numero}" data-canal="${nombre} (DIGITAL)">
+    `;
+
+    contenedor.appendChild(div);
+
+    sub++;
+    if(sub > 4){
+      sub = 1;
+      canalBase++;
+    }
+  });
+}
+
+// CREAR
+crearCanales(canales, "ANALOGICO", analogicosDiv, 2);
+crearDigitales(canalesDigitales, digitalesDiv);
+
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
 
 
