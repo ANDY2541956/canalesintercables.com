@@ -8,39 +8,40 @@
 <style>
   h2 { text-align:center; margin:20px 0; }
 
-  .controls {
-    margin-bottom:15px;
-    text-align:center;
-    background:#fff;
-    padding:10px;
-  }
+  .controls { margin-bottom:15px; text-align:center; background:#fff; padding:10px; }
 
   .contenedor-principal {
-    display:flex;
-    justify-content:center;
+    display: flex;
+    justify-content: center;
   }
 
   .columna {
-    width:60%;
+    width: 80%;
   }
 
   .columna h3 {
-    text-align:center;
+    text-align: center;
+  }
+
+  /* 🔥 AQUÍ ESTÁ EL CAMBIO IMPORTANTE */
+  #analogicos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
   }
 
   .canal-item {
-    display:flex;
-    align-items:center;
+    display: flex;
+    align-items: center;
     border:1px solid #ccc;
     padding:5px;
     border-radius:5px;
-    background:#fff;
-    margin-bottom:5px;
+    background: #fff;
   }
 
   .canal-item span { flex:1; font-weight:bold; }
 
-  .checkbox { margin-left:10px; transform:scale(1.2); }
+  .checkbox { margin-left:10px; transform: scale(1.2); cursor:pointer; }
 
   select, input[type="text"] {
     margin-left:5px;
@@ -50,13 +51,8 @@
   }
 
   button {
-    margin:5px;
-    padding:8px 12px;
-    background:#2196F3;
-    color:white;
-    border:none;
-    border-radius:5px;
-    cursor:pointer;
+    margin:5px; padding:8px 12px; background:#2196F3; color:white;
+    border:none; border-radius:5px; cursor:pointer;
   }
 
   button:hover { background:#1976D2; }
@@ -98,111 +94,56 @@
 
 <script>
 
-// 🔵 LISTA ANALÓGICOS COMPLETA
+// LISTA BASE
 const canales = [
-{num:2,nombre:"ECUAVISA"},
-{num:3,nombre:"EL TRECE INT"},
-{num:4,nombre:"RTS"},
-{num:5,nombre:"TELEAMAZONAS"},
-{num:6,nombre:"COSTA TV"},
-{num:7,nombre:"ECUADOR TV"},
-{num:8,nombre:"GAMA TV"},
-{num:9,nombre:"ANTENA 3 SERIES"},
-{num:10,nombre:"TC TELEVISION"},
-{num:11,nombre:"TVC"},
-{num:13,nombre:"OROMAR TV"},
-{num:15,nombre:"TELESUR"},
-{num:16,nombre:"HISPAN TV"},
-{num:17,nombre:"RT RUSIAN"},
-{num:18,nombre:"A&E"},
-{num:20,nombre:"EL CANAL DEL FUTBOL"},
-{num:21,nombre:"ESPN"},
-{num:22,nombre:"FOX SPORT 3"},
-{num:23,nombre:"ESPN 2"},
-{num:24,nombre:"ESPN 3"},
-{num:25,nombre:"ESPN 4"},
-{num:26,nombre:"HISTORY"},
-{num:27,nombre:"HISTORY 2"},
-{num:28,nombre:"EUROCHANNEL"},
-{num:29,nombre:"HBO"},
-{num:30,nombre:"ZOOMOO"},
-{num:31,nombre:"NICK"},
-{num:32,nombre:"DREAMWORKS"},
-{num:33,nombre:"NICK JR"},
-{num:35,nombre:"CARTOONITO"},
-{num:36,nombre:"CARTOON NETWORK"},
-{num:37,nombre:"TOONCAST"},
-{num:38,nombre:"SPACE"},
-{num:39,nombre:"SONY"},
-{num:40,nombre:"SONY MOVIES"},
-{num:42,nombre:"STUDIO UNIVERSAL"},
-{num:43,nombre:"UNIVERSAL"},
-{num:44,nombre:"FILM & ARTS"},
-{num:45,nombre:"COMEDY CENTRAL"},
-{num:46,nombre:"USA"},
-{num:47,nombre:"TNT SERIES"},
-{num:50,nombre:"AXN"},
-{num:51,nombre:"CINECANAL"},
-{num:52,nombre:"AMC"},
-{num:53,nombre:"HOLA TV"},
-{num:54,nombre:"TNT"},
-{num:55,nombre:"CINEMA PLATINO"},
-{num:56,nombre:"PANICO HD"},
-{num:57,nombre:"CINEMEXICANO"},
-{num:66,nombre:"LIFETIME"},
-{num:67,nombre:"DISCOVERY CHANNEL"},
-{num:68,nombre:"E!"},
-{num:70,nombre:"CANAL DE LAS ESTRELLAS"},
-{num:71,nombre:"TELEMUNDO"},
-{num:72,nombre:"PASIONES"},
-{num:73,nombre:"TELENOVELAS"},
-{num:76,nombre:"TELEFE"},
-{num:77,nombre:"SEÑAL COLOMBIA"},
-{num:78,nombre:"NUESTRO TIEMPO"},
-{num:79,nombre:"ENLACE"},
-{num:80,nombre:"EWTN"},
-{num:81,nombre:"TELEVEN"}
+"ECUAVISA","EL TRECE","RTS","TELEAMAZONAS","COSTA TV","ECUADOR TV","GAMA TV","ANTENA 3 SERIES","TC TELEVISION","TVC","AZTECA UNO","OROMAR","44.2","TELESUR","HISPAN TV","ANTV","A&E","VTV","ESPN HD","ESPN 2","FOX SPORTS 3","ESPN 3","ESPN 4","ESPN 5","HISTORY","HISTORY 2","EUROCHANNEL","HBO FAMILY","ZOOMOO","NICKELODEON","DREAMWORKS","NICK JR","CANAL 9","CARTOONITO","CARTOON NETWORK","TOONCAST","TNT SPORTS","SONY","SONY MOVIES","A3 CINEMA","STUDIO UNIVERSAL","UNIVERSAL","FILM & ARTS","COMEDY CENTRAL","USA","TNT SERIES","EUROPA HD","VENEVISION","AXN","CINECANAL","AMC","HOLA TV","TNT","CINEMA PLATINO","PANICO TV","CINE MEXICANO","TRAVEL XP","AMC SERIES","MTV","TV PUBLICA ARG","CARACOL","Q MUSICA","VIDEO ROLA","GOURMET","LIFETIME","DISCOVERY CHANNEL","E!","RCN SD","CANAL DE LAS ESTRELLAS","TELEMUNDO","PASIONES","TELENOVELAS","VENE PLUS","CITY TV","TELEFE","SENAL COLOMBIA","NUESTRO TIEMPO","ENLACE","EWTN","TELEVEN"
 ];
 
-const contenedor = document.getElementById('analogicos');
+// CONTENEDOR
+const analogicosDiv = document.getElementById('analogicos');
+
+// FECHA
 document.getElementById('fecha').valueAsDate = new Date();
 
 // CREAR CANALES
-canales.forEach(canal => {
+function crearCanales(lista, tipo, contenedor, inicio){
+  lista.forEach((nombre, index) => {
 
-  const id = `${canal.num}-ANALOGICO`;
+    const numero = inicio + index;
 
-  const div = document.createElement('div');
-  div.className = 'canal-item';
+    const div = document.createElement('div');
+    div.className = 'canal-item';
 
-  div.innerHTML = `
-    <span>${canal.num} - ${canal.nombre}</span>
-    <input type="checkbox" class="checkbox">
+    div.innerHTML = `
+      <span>${numero.toString().padStart(2,'0')} - ${nombre}</span>
+      <input type="checkbox" class="checkbox">
 
-    <select class="observacion-opcion" data-id="${id}">
-      <option value="">-- Seleccione --</option>
-      <option>SIN VIDEO</option>
-      <option>SIN AUDIO</option>
-      <option>SIN AUDIO Y VIDEO</option>
-      <option>SIN SEÑAL</option>
-      <option>IMAGEN COLGADA</option>
-      <option>CANAL BORROSO</option>
-      <option>CANAL REVUELTO</option>
-      <option>PROGRAMA ENCRIPTADO</option>
-      <option>SE CAMBIO DE CANAL</option>
-      <option>SE REALIZO BUSQUEDA CIEGA</option>
-      <option>SE REINICIÓ</option>
-    </select>
+      <select class="observacion-opcion" data-numero="${numero}">
+        <option value="">-- Seleccione --</option>
+        <option value="SIN VIDEO">SIN VIDEO</option>
+        <option value="SIN AUDIO">SIN AUDIO</option>
+        <option value="SIN AUDIO Y VIDEO">SIN AUDIO Y VIDEO</option>
+        <option value="SIN SEÑAL">SIN SEÑAL</option>
+        <option value="IMAGEN COLGADA">IMAGEN COLGADA</option>
+        <option value="CANAL BORROSO">CANAL BORROSO</option>
+        <option value="CANAL REVUELTO">CANAL REVUELTO</option>
+        <option value="PROGRAMA ENCRIPTADO">PROGRAMA ENCRIPTADO</option>
+        <option value="SE CAMBIO DE CANAL">SE CAMBIO DE CANAL</option>
+        <option value="SE REALIZO BUSQUEDA CIEGA">SE REALIZO BUSQUEDA CIEGA</option>
+        <option value="SE REINICIÓ">SE REINICIÓ</option>
+      </select>
 
-    <input type="text" class="observacion"
-      data-id="${id}"
-      data-numero="${canal.num}"
-      data-canal="${canal.nombre} (ANALOGICO)"
-      oninput="soloTexto(this)">
-  `;
+      <input type="text" class="observacion"
+        data-numero="${numero}" data-canal="${nombre} (${tipo})"
+        oninput="soloTexto(this)">
+    `;
 
-  contenedor.appendChild(div);
-});
+    contenedor.appendChild(div);
+  });
+}
+
+// GENERAR
+crearCanales(canales, "ANALOGICO", analogicosDiv, 2);
 
 // FUNCIONES
 function marcarTodos(){
@@ -210,13 +151,13 @@ function marcarTodos(){
 }
 
 function soloTexto(input){
-  input.value = input.value.replace(/[^A-Za-zÁÉÍÓÚÑ\s]/g,'').toUpperCase();
+  input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'').toUpperCase();
 }
 
 document.addEventListener("change", function(e){
   if (e.target.classList.contains("observacion-opcion")) {
-    const id = e.target.dataset.id;
-    const input = document.querySelector(`input.observacion[data-id="${id}"]`);
+    const numero = e.target.dataset.numero;
+    const input = document.querySelector(`input.observacion[data-numero="${numero}"]`);
     if(input) input.value = e.target.value;
   }
 });
@@ -252,7 +193,7 @@ async function guardarObservaciones(){
     });
   }
 
-  await fetch("https://script.google.com/macros/s/AKfycbyFC_c7It-J8K07QHFqC0mNV3ndB5H51DGaVt7is6yc7iCU3PJDmmHp8SB4duYugILf7g/exec", {
+  await fetch("https://script.google.com/macros/s/AKfycbzyOB9mnlBVjGJRqJ29e2WkPIlMN6BIDLtAD5I7jNXClpzEquBk7a2g-kEZRBqo17dtkA/exec", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify(observaciones),
