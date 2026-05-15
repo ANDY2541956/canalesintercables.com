@@ -8,48 +8,68 @@
 <style>
   h2 { text-align:center; margin:20px 0; }
 
-  .controls { margin-bottom:15px; text-align:center; background:#fff; padding:10px; }
+  .controls {
+    margin-bottom:15px;
+    text-align:center;
+    background:#fff;
+    padding:10px;
+  }
 
   .contenedor-principal {
-    display: flex;
-    gap: 10px;
+    display:flex;
+    gap:10px;
   }
 
   .columna {
-    width: 50%;
+    width:50%;
   }
 
   .columna h3 {
-    text-align: center;
+    text-align:center;
   }
 
   .canal-item {
-    display: flex;
-    align-items: center;
+    display:flex;
+    align-items:center;
     border:1px solid #ccc;
     padding:5px;
     border-radius:5px;
-    background: #fff;
+    background:#fff;
     margin-bottom:5px;
   }
 
-  .canal-item span { flex:1; font-weight:bold; }
+  .canal-item span {
+    flex:1;
+    font-weight:bold;
+  }
 
-  .checkbox { margin-left:10px; transform: scale(1.2); cursor:pointer; }
+  .checkbox {
+    margin-left:10px;
+    transform:scale(1.2);
+    cursor:pointer;
+  }
 
-  select, input[type="text"] {
+  select,
+  input[type="text"]{
     margin-left:5px;
     flex:1;
     text-align:center;
     padding:3px;
   }
 
-  button {
-    margin:5px; padding:8px 12px; background:#2196F3; color:white;
-    border:none; border-radius:5px; cursor:pointer;
+  button{
+    margin:5px;
+    padding:8px 12px;
+    background:#2196F3;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
   }
 
-  button:hover { background:#1976D2; }
+  button:hover{
+    background:#1976D2;
+  }
 </style>
 </head>
 
@@ -58,7 +78,9 @@
 <h2>Revisión de Canales Operativos</h2>
 
 <div class="controls">
+
   <label>Persona Responsable:</label>
+
   <select id="tecnico">
     <option value="">Seleccione</option>
     <option>FRANCISCO C</option>
@@ -69,23 +91,26 @@
     <option>FABIAN T</option>
     <option>RAFAEL G</option>
     <option>LEONARDO R</option>
-  </select> 
-  
+  </select>
+
   <label>Fecha:</label>
   <input type="date" id="fecha">
 
   <button onclick="marcarTodos()">Marcar Todos Activos</button>
   <button onclick="guardarObservaciones()">Guardar Observaciones</button>
   <button onclick="descargarReporte()">Descargar Imagen</button>
+
 </div>
 
 <div class="contenedor-principal">
-  
+
+  <!-- ANALOGICOS -->
   <div class="columna">
     <h3>CANALES ANALÓGICOS</h3>
     <div id="analogicos"></div>
   </div>
 
+  <!-- DIGITALES -->
   <div class="columna">
     <h3>CANALES DIGITALES</h3>
     <div id="digitales"></div>
@@ -104,8 +129,10 @@ const digitalesDiv = document.getElementById('digitales');
 
 document.getElementById('fecha').valueAsDate = new Date();
 
-// 🔹 ANALÓGICOS (igual que antes)
+
+// 🔹 CREAR ANALOGICOS
 function crearCanales(lista, tipo, contenedor, inicio){
+
   lista.forEach((nombre, index) => {
 
     const numero = inicio + index;
@@ -116,6 +143,7 @@ function crearCanales(lista, tipo, contenedor, inicio){
 
     div.innerHTML = `
       <span>${numero.toString().padStart(2,'0')} - ${nombre}</span>
+
       <input type="checkbox" class="checkbox">
 
       <select class="observacion-opcion" data-id="${idUnico}">
@@ -133,18 +161,21 @@ function crearCanales(lista, tipo, contenedor, inicio){
         <option value="SE REINICIÓ">SE REINICIÓ</option>
       </select>
 
-      <input type="text" class="observacion"
+      <input type="text"
+        class="observacion"
         data-id="${idUnico}"
-        data-numero="${numero}" 
+        data-numero="${numero}"
         data-canal="${nombre} (${tipo})"
         oninput="soloTexto(this)">
     `;
 
     contenedor.appendChild(div);
+
   });
 }
 
-// 🔥 SOLO CAMBIO AQUÍ (DIGITALES 31.1)
+
+// 🔥 CREAR DIGITALES
 function crearDigitales(lista, contenedor){
 
   let base = 31;
@@ -160,6 +191,7 @@ function crearDigitales(lista, contenedor){
 
     div.innerHTML = `
       <span>${numero} - ${nombre}</span>
+
       <input type="checkbox" class="checkbox">
 
       <select class="observacion-opcion" data-id="${idUnico}">
@@ -177,9 +209,10 @@ function crearDigitales(lista, contenedor){
         <option value="SE REINICIÓ">SE REINICIÓ</option>
       </select>
 
-      <input type="text" class="observacion"
+      <input type="text"
+        class="observacion"
         data-id="${idUnico}"
-        data-numero="${numero}" 
+        data-numero="${numero}"
         data-canal="${nombre} (DIGITAL)"
         oninput="soloTexto(this)">
     `;
@@ -187,55 +220,125 @@ function crearDigitales(lista, contenedor){
     contenedor.appendChild(div);
 
     sub++;
+
     if(sub > 4){
       sub = 1;
       base++;
     }
+
   });
 }
 
-// CREAR
+
+// CREAR LISTAS
 crearCanales(canales, "ANALOGICO", analogicosDiv, 2);
 crearDigitales(canales, digitalesDiv);
 
-// 🔹 BOTÓN ORIGINAL (no lo cambié)
+
+// 🔹 FUNCIONES
 function marcarTodos(){
   document.querySelectorAll('.checkbox').forEach(cb => cb.checked = true);
 }
 
 function soloTexto(input){
-  input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'').toUpperCase();
+  input.value = input.value
+    .replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'')
+    .toUpperCase();
 }
 
-// EVENTO
+
+// 🔹 SELECT INDEPENDIENTE
 document.addEventListener("change", function(e){
-  if (e.target.classList.contains("observacion-opcion")) {
+
+  if(e.target.classList.contains("observacion-opcion")){
+
     const id = e.target.dataset.id;
-    const input = document.querySelector(`input.observacion[data-id="${id}"]`);
-    if(input) input.value = e.target.value;
+
+    const input = document.querySelector(
+      `input.observacion[data-id="${id}"]`
+    );
+
+    if(input){
+      input.value = e.target.value;
+    }
   }
 });
 
-// GUARDAR
+
+// 🔥 GUARDAR EN GOOGLE SHEETS
 async function guardarObservaciones(){
+
   const responsable = document.getElementById('tecnico').value;
 
-  if (!responsable){
+  if(!responsable){
     alert("Seleccione responsable");
     return;
   }
 
+  const observaciones = [];
+
+  document.querySelectorAll('.observacion').forEach(input => {
+
+    if(input.value.trim() !== ""){
+
+      observaciones.push({
+        responsable,
+        numero: input.dataset.numero,
+        canal: input.dataset.canal,
+        observacion: input.value
+      });
+
+    }
+
+  });
+
+
+  // SI NO HAY OBSERVACIONES
+  if(observaciones.length === 0){
+
+    observaciones.push({
+      responsable,
+      numero: "00",
+      canal: "TODOS",
+      observacion: "TODOS LOS CANALES OPERATIVOS"
+    });
+
+  }
+
+
+  // 🔥 ENVIO A GOOGLE SHEETS
+  await fetch("https://script.google.com/macros/s/AKfycbzyOB9mnlBVjGJRqJ29e2WkPIlMN6BIDLtAD5I7jNXClpzEquBk7a2g-kEZRBqo17dtkA/exec", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(observaciones),
+    mode: "no-cors"
+  });
+
   alert("Guardado correctamente");
 }
 
-// IMAGEN
+
+// 🔥 DESCARGAR IMAGEN
 function descargarReporte(){
+
   html2canvas(document.body).then(canvas => {
+
     const link = document.createElement('a');
-    link.download = "reporte.png";
+
+    const responsable = document.getElementById('tecnico').value || 'SIN_RESPONSABLE';
+
+    const fecha = document.getElementById('fecha').value || 'SIN_FECHA';
+
+    link.download = `reporte_${responsable}_${fecha}.png`;
+
     link.href = canvas.toDataURL();
+
     link.click();
+
   });
+
 }
 
 </script>
