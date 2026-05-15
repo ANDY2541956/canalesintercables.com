@@ -3,73 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <title>Revisión de Canales Operativos</title>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
-  h2 { text-align:center; margin:20px 0; }
 
-  .controls {
-    margin-bottom:15px;
-    text-align:center;
-    background:#fff;
-    padding:10px;
-  }
+body{
+  font-family: Arial, sans-serif;
+}
 
-  .contenedor-principal {
-    display:flex;
-    gap:10px;
-  }
+h2{
+  text-align:center;
+  margin:20px 0;
+}
 
-  .columna {
-    width:50%;
-  }
+.controls{
+  margin-bottom:15px;
+  text-align:center;
+  background:#fff;
+  padding:10px;
+}
 
-  .columna h3 {
-    text-align:center;
-  }
+.contenedor-principal{
+  display:flex;
+  gap:10px;
+}
 
-  .canal-item {
-    display:flex;
-    align-items:center;
-    border:1px solid #ccc;
-    padding:5px;
-    border-radius:5px;
-    background:#fff;
-    margin-bottom:5px;
-  }
+.columna{
+  width:50%;
+}
 
-  .canal-item span {
-    flex:1;
-    font-weight:bold;
-  }
+.columna h3{
+  text-align:center;
+  background:#2196F3;
+  color:white;
+  padding:10px;
+  border-radius:5px;
+}
 
-  .checkbox {
-    margin-left:10px;
-    transform:scale(1.2);
-    cursor:pointer;
-  }
+.canal-item{
+  display:flex;
+  align-items:center;
+  border:1px solid #ccc;
+  padding:5px;
+  border-radius:5px;
+  background:#fff;
+  margin-bottom:5px;
+}
 
-  select,
-  input[type="text"]{
-    margin-left:5px;
-    flex:1;
-    text-align:center;
-    padding:3px;
-  }
+.canal-item span{
+  flex:1;
+  font-weight:bold;
+  font-size:13px;
+}
 
-  button{
-    margin:5px;
-    padding:8px 12px;
-    background:#2196F3;
-    color:white;
-    border:none;
-    border-radius:5px;
-    cursor:pointer;
-  }
+.checkbox{
+  margin-left:10px;
+  transform:scale(1.2);
+  cursor:pointer;
+}
 
-  button:hover{
-    background:#1976D2;
-  }
+select,
+input[type="text"]{
+  margin-left:5px;
+  flex:1;
+  text-align:center;
+  padding:3px;
+}
+
+button{
+  margin:5px;
+  padding:8px 12px;
+  background:#2196F3;
+  color:white;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#1976D2;
+}
+
 </style>
 </head>
 
@@ -79,49 +94,189 @@
 
 <div class="controls">
 
-  <label>Persona Responsable:</label>
+<label>Persona Responsable:</label>
 
-  <select id="tecnico">
-    <option value="">Seleccione</option>
-    <option>FRANCISCO C</option>
-    <option>RONALD G</option>
-    <option>WILTON M</option>
-    <option>ANDY O</option>
-    <option>GENESIS G</option>
-    <option>FABIAN T</option>
-    <option>RAFAEL G</option>
-    <option>LEONARDO R</option>
-  </select>
+<select id="tecnico">
+<option value="">Seleccione</option>
+<option>FRANCISCO C</option>
+<option>RONALD G</option>
+<option>WILTON M</option>
+<option>ANDY O</option>
+<option>GENESIS G</option>
+<option>FABIAN T</option>
+<option>RAFAEL G</option>
+<option>LEONARDO R</option>
+</select>
 
-  <label>Fecha:</label>
-  <input type="date" id="fecha">
+<label>Fecha:</label>
+<input type="date" id="fecha">
 
-  <button onclick="marcarTodos()">Marcar Todos Activos</button>
-  <button onclick="guardarObservaciones()">Guardar Observaciones</button>
-  <button onclick="descargarReporte()">Descargar Imagen</button>
+<button onclick="marcarTodos()">Marcar Todos Activos</button>
+<button onclick="guardarObservaciones()">Guardar Observaciones</button>
+<button onclick="descargarReporte()">Descargar Imagen</button>
 
 </div>
 
 <div class="contenedor-principal">
 
-  <!-- ANALOGICOS -->
-  <div class="columna">
-    <h3>CANALES ANALÓGICOS</h3>
-    <div id="analogicos"></div>
-  </div>
+<div class="columna">
+<h3>CANALES ANALÓGICOS</h3>
+<div id="analogicos"></div>
+</div>
 
-  <!-- DIGITALES -->
-  <div class="columna">
-    <h3>CANALES DIGITALES</h3>
-    <div id="digitales"></div>
-  </div>
+<div class="columna">
+<h3>CANALES DIGITALES</h3>
+<div id="digitales"></div>
+</div>
 
 </div>
 
 <script>
 
-const canales = [
-"ECUAVISA","EL TRECE","RTS","TELEAMAZONAS","COSTA TV","ECUADOR TV","GAMA TV","ANTENA 3 SERIES","TC TELEVISION","TVC","AZTECA UNO","OROMAR","44.2","TELESUR","HISPAN TV","ANTV","A&E","VTV","ESPN HD","ESPN 2","FOX SPORTS 3","ESPN 3","ESPN 4","ESPN 5","HISTORY","HISTORY 2","EUROCHANNEL","HBO FAMILY","ZOOMOO","NICKELODEON","DREAMWORKS","NICK JR","CANAL 9","CARTOONITO","CARTOON NETWORK","TOONCAST","TNT SPORTS","SONY","SONY MOVIES","A3 CINEMA","STUDIO UNIVERSAL","UNIVERSAL","FILM & ARTS","COMEDY CENTRAL","USA","TNT SERIES","EUROPA HD","VENEVISION","AXN","CINECANAL","AMC","HOLA TV","TNT","CINEMA PLATINO","PANICO TV","CINE MEXICANO","TRAVEL XP","AMC SERIES","MTV","TV PUBLICA ARG","CARACOL","Q MUSICA","VIDEO ROLA","GOURMET","LIFETIME","DISCOVERY CHANNEL","E!","RCN SD","CANAL DE LAS ESTRELLAS","TELEMUNDO","PASIONES","TELENOVELAS","VENE PLUS","CITY TV","TELEFE","SENAL COLOMBIA","NUESTRO TIEMPO","ENLACE","EWTN","TELEVEN"
+// 🔵 CANALES ANALÓGICOS
+const canalesAnalogicos = [
+{numero:2, nombre:"ECUAVISA"},
+{numero:3, nombre:"EL TRECE"},
+{numero:4, nombre:"RTS"},
+{numero:5, nombre:"TELEAMAZONAS"},
+{numero:6, nombre:"COSTA TV"},
+{numero:7, nombre:"ECUADOR TV"},
+{numero:8, nombre:"GAMATV"},
+{numero:9, nombre:"ANTENA 3 SERIES"},
+{numero:10, nombre:"TC TELEVISION"},
+{numero:11, nombre:"TVC"},
+{numero:12, nombre:"MAGAZINE"},
+{numero:13, nombre:"OROMAR TV"},
+{numero:14, nombre:"KANAL D DRAMA"},
+{numero:15, nombre:"TELESUR"},
+{numero:16, nombre:"HISPAN TV"},
+{numero:17, nombre:"RT RUSIAN TV"},
+{numero:18, nombre:"A&E"},
+{numero:19, nombre:"TyC SPORTS"},
+{numero:20, nombre:"ECDF"},
+{numero:21, nombre:"FOX SPORTS 2"},
+{numero:22, nombre:"FOX SPORTS 3"},
+{numero:23, nombre:"ESPN"},
+{numero:24, nombre:"ESPN 2"},
+{numero:25, nombre:"ESPN 3"},
+{numero:26, nombre:"HISTORY"},
+{numero:27, nombre:"HISTORY 2"},
+{numero:28, nombre:"HBO"},
+{numero:29, nombre:"NAT GEO"},
+{numero:30, nombre:"ZOOMOO"},
+{numero:31, nombre:"NICK"},
+{numero:32, nombre:"DREAMWORKS"},
+{numero:33, nombre:"NICK JR"},
+{numero:34, nombre:"AMC SERIES"},
+{numero:35, nombre:"CARTOONITO"},
+{numero:36, nombre:"CARTOON NETWORK"},
+{numero:37, nombre:"TOONCAST"},
+{numero:38, nombre:"SPACE"},
+{numero:39, nombre:"SONY CHANNEL"},
+{numero:40, nombre:"SONY MOVIES"},
+{numero:41, nombre:"TELEANTILLAS"},
+{numero:42, nombre:"STUDIO UNIVERSAL"},
+{numero:43, nombre:"UNIVERSAL"},
+{numero:44, nombre:"FILM & ARTS"},
+{numero:45, nombre:"COMEDY CENTRAL"},
+{numero:46, nombre:"USA"},
+{numero:47, nombre:"TNT SERIES"},
+{numero:48, nombre:"XHDF"},
+{numero:49, nombre:"VENEVISION"},
+{numero:50, nombre:"AXN"},
+{numero:51, nombre:"CINECANAL"},
+{numero:52, nombre:"AMC"},
+{numero:53, nombre:"HOLA TV"},
+{numero:54, nombre:"TNT"},
+{numero:55, nombre:"CINEMA PLATINO"},
+{numero:56, nombre:"PANICO HD"},
+{numero:57, nombre:"CINE MEXICANO"},
+{numero:58, nombre:"TRAVEL XP"},
+{numero:59, nombre:"TODO NOTICIAS"},
+{numero:60, nombre:"MTV"},
+{numero:61, nombre:"TV CHILE"},
+{numero:62, nombre:"CARACOL TV"},
+{numero:63, nombre:"QUIERO MUSICA"},
+{numero:64, nombre:"VIDEO ROLA"},
+{numero:65, nombre:"GOURMET"},
+{numero:66, nombre:"LIFETIME"},
+{numero:67, nombre:"DISCOVERY CHANNEL"},
+{numero:68, nombre:"E! ENTERTAIMENT"},
+{numero:69, nombre:"RCN"},
+{numero:70, nombre:"LAS ESTRELLAS"},
+{numero:71, nombre:"TELEMUNDO"},
+{numero:72, nombre:"PASIONES"},
+{numero:73, nombre:"TELENOVELAS"},
+{numero:74, nombre:"VENE PLUS"},
+{numero:75, nombre:"CITY TV"},
+{numero:76, nombre:"TELEFE"},
+{numero:77, nombre:"SEÑAL COLOMBIA"},
+{numero:78, nombre:"NUESTRO TIEMPO"},
+{numero:79, nombre:"ENLACE"},
+{numero:80, nombre:"EWTN"},
+{numero:81, nombre:"TELEVEN"}
+];
+
+
+// 🔴 CANALES DIGITALES
+const canalesDigitales = [
+{numero:"31.1", nombre:"ECUAVISA"},
+{numero:"31.2", nombre:"EL TRECE"},
+{numero:"31.3", nombre:"RTS"},
+{numero:"31.4", nombre:"TELEAMAZONAS"},
+{numero:"32.1", nombre:"COSTA TV"},
+{numero:"32.2", nombre:"ECUADOR TV"},
+{numero:"32.3", nombre:"GAMATV"},
+{numero:"32.4", nombre:"TC TELEVISION"},
+{numero:"33.1", nombre:"TVC"},
+{numero:"33.2", nombre:"OROMAR TV"},
+{numero:"33.3", nombre:"KANAL D DRAMA"},
+{numero:"33.4", nombre:"TELESUR"},
+{numero:"34.1", nombre:"HISPAN TV"},
+{numero:"34.2", nombre:"RT RUSIAN TV"},
+{numero:"34.3", nombre:"A&E"},
+{numero:"34.4", nombre:"TyC SPORTS"},
+{numero:"35.1", nombre:"ECDF"},
+{numero:"35.2", nombre:"FOX SPORTS 2"},
+{numero:"35.3", nombre:"FOX SPORTS 3"},
+{numero:"35.4", nombre:"ESPN"},
+{numero:"36.1", nombre:"ESPN 2"},
+{numero:"36.2", nombre:"ESPN 3"},
+{numero:"36.3", nombre:"HISTORY"},
+{numero:"36.4", nombre:"HISTORY 2"},
+{numero:"37.1", nombre:"HBO"},
+{numero:"37.2", nombre:"NAT GEO"},
+{numero:"37.3", nombre:"ZOOMOO"},
+{numero:"37.4", nombre:"NICK"},
+{numero:"38.1", nombre:"DREAMWORKS"},
+{numero:"38.2", nombre:"NICK JR"},
+{numero:"38.3", nombre:"CARTOONITO"},
+{numero:"38.4", nombre:"CARTOON NETWORK"},
+{numero:"39.1", nombre:"TOONCAST"},
+{numero:"39.2", nombre:"SPACE"},
+{numero:"39.3", nombre:"SONY CHANNEL"},
+{numero:"39.4", nombre:"SONY MOVIES"},
+{numero:"40.1", nombre:"STUDIO UNIVERSAL"},
+{numero:"40.2", nombre:"UNIVERSAL"},
+{numero:"40.3", nombre:"COMEDY CENTRAL"},
+{numero:"40.4", nombre:"USA"},
+{numero:"41.1", nombre:"TNT SERIES"},
+{numero:"41.2", nombre:"AXN"},
+{numero:"41.3", nombre:"CINECANAL"},
+{numero:"41.4", nombre:"AMC"},
+{numero:"42.1", nombre:"HOLA TV"},
+{numero:"42.2", nombre:"TNT"},
+{numero:"42.3", nombre:"CINEMA PLATINO"},
+{numero:"42.4", nombre:"PANICO HD"},
+{numero:"43.1", nombre:"CINE MEXICANO"},
+{numero:"43.2", nombre:"LIFETIME"},
+{numero:"43.3", nombre:"DISCOVERY CHANNEL"},
+{numero:"43.4", nombre:"E! ENTERTAIMENT"},
+{numero:"44.1", nombre:"LAS ESTRELLAS"},
+{numero:"44.2", nombre:"TELEMUNDO"},
+{numero:"44.3", nombre:"PASIONES"},
+{numero:"44.4", nombre:"TELENOVELAS"},
+{numero:"45.1", nombre:"TELEFE"}
 ];
 
 const analogicosDiv = document.getElementById('analogicos');
@@ -130,19 +285,19 @@ const digitalesDiv = document.getElementById('digitales');
 document.getElementById('fecha').valueAsDate = new Date();
 
 
-// 🔹 CREAR ANALOGICOS
-function crearCanales(lista, tipo, contenedor, inicio){
+// 🔵 CREAR ANALOGICOS
+function crearAnalogicos(){
 
-  lista.forEach((nombre, index) => {
+  canalesAnalogicos.forEach(canal => {
 
-    const numero = inicio + index;
-    const idUnico = `${numero}-${tipo}`;
+    const idUnico = `${canal.numero}-ANALOGICO`;
 
     const div = document.createElement('div');
+
     div.className = 'canal-item';
 
     div.innerHTML = `
-      <span>${numero.toString().padStart(2,'0')} - ${nombre}</span>
+      <span>${canal.numero} - ${canal.nombre}</span>
 
       <input type="checkbox" class="checkbox">
 
@@ -156,41 +311,36 @@ function crearCanales(lista, tipo, contenedor, inicio){
         <option value="CANAL BORROSO">CANAL BORROSO</option>
         <option value="CANAL REVUELTO">CANAL REVUELTO</option>
         <option value="PROGRAMA ENCRIPTADO">PROGRAMA ENCRIPTADO</option>
-        <option value="SE CAMBIO DE CANAL">SE CAMBIO DE CANAL</option>
-        <option value="SE REALIZO BUSQUEDA CIEGA">SE REALIZO BUSQUEDA CIEGA</option>
-        <option value="SE REINICIÓ">SE REINICIÓ</option>
       </select>
 
       <input type="text"
         class="observacion"
         data-id="${idUnico}"
-        data-numero="${numero}"
-        data-canal="${nombre} (${tipo})"
+        data-numero="${canal.numero}"
+        data-canal="${canal.nombre} (ANALOGICO)"
         oninput="soloTexto(this)">
     `;
 
-    contenedor.appendChild(div);
+    analogicosDiv.appendChild(div);
 
   });
+
 }
 
 
-// 🔥 CREAR DIGITALES
-function crearDigitales(lista, contenedor){
+// 🔴 CREAR DIGITALES
+function crearDigitales(){
 
-  let base = 31;
-  let sub = 1;
+  canalesDigitales.forEach(canal => {
 
-  lista.forEach((nombre) => {
-
-    const numero = `${base}.${sub}`;
-    const idUnico = `${numero}-DIGITAL`;
+    const idUnico = `${canal.numero}-DIGITAL`;
 
     const div = document.createElement('div');
+
     div.className = 'canal-item';
 
     div.innerHTML = `
-      <span>${numero} - ${nombre}</span>
+      <span>${canal.numero} - ${canal.nombre}</span>
 
       <input type="checkbox" class="checkbox">
 
@@ -204,35 +354,26 @@ function crearDigitales(lista, contenedor){
         <option value="CANAL BORROSO">CANAL BORROSO</option>
         <option value="CANAL REVUELTO">CANAL REVUELTO</option>
         <option value="PROGRAMA ENCRIPTADO">PROGRAMA ENCRIPTADO</option>
-        <option value="SE CAMBIO DE CANAL">SE CAMBIO DE CANAL</option>
-        <option value="SE REALIZO BUSQUEDA CIEGA">SE REALIZO BUSQUEDA CIEGA</option>
-        <option value="SE REINICIÓ">SE REINICIÓ</option>
       </select>
 
       <input type="text"
         class="observacion"
         data-id="${idUnico}"
-        data-numero="${numero}"
-        data-canal="${nombre} (DIGITAL)"
+        data-numero="${canal.numero}"
+        data-canal="${canal.nombre} (DIGITAL)"
         oninput="soloTexto(this)">
     `;
 
-    contenedor.appendChild(div);
-
-    sub++;
-
-    if(sub > 4){
-      sub = 1;
-      base++;
-    }
+    digitalesDiv.appendChild(div);
 
   });
+
 }
 
 
-// CREAR LISTAS
-crearCanales(canales, "ANALOGICO", analogicosDiv, 2);
-crearDigitales(canales, digitalesDiv);
+// 🔥 EJECUTAR
+crearAnalogicos();
+crearDigitales();
 
 
 // 🔹 FUNCIONES
@@ -242,8 +383,8 @@ function marcarTodos(){
 
 function soloTexto(input){
   input.value = input.value
-    .replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'')
-    .toUpperCase();
+  .replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'')
+  .toUpperCase();
 }
 
 
@@ -261,11 +402,13 @@ document.addEventListener("change", function(e){
     if(input){
       input.value = e.target.value;
     }
+
   }
+
 });
 
 
-// 🔥 GUARDAR EN GOOGLE SHEETS
+// 🔥 GUARDAR
 async function guardarObservaciones(){
 
   const responsable = document.getElementById('tecnico').value;
@@ -293,7 +436,6 @@ async function guardarObservaciones(){
   });
 
 
-  // SI NO HAY OBSERVACIONES
   if(observaciones.length === 0){
 
     observaciones.push({
@@ -306,17 +448,17 @@ async function guardarObservaciones(){
   }
 
 
-  // 🔥 ENVIO A GOOGLE SHEETS
   await fetch("https://script.google.com/macros/s/AKfycbzyOB9mnlBVjGJRqJ29e2WkPIlMN6BIDLtAD5I7jNXClpzEquBk7a2g-kEZRBqo17dtkA/exec", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
     },
-    body: JSON.stringify(observaciones),
-    mode: "no-cors"
+    body:JSON.stringify(observaciones),
+    mode:"no-cors"
   });
 
   alert("Guardado correctamente");
+
 }
 
 
